@@ -2,13 +2,17 @@ package ru.easycode.zerotoheroandroidtdd
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.easycode.zerotoheroandroidtdd.Instance
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var state: Instance
+    private val viewModel by viewModels<SimpleStateViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -16,22 +20,21 @@ class MainActivity : AppCompatActivity() {
         val text = findViewById<TextView>(R.id.titleTextView)
         val button = findViewById<Button>(R.id.changeButton)
 
-
-
-        state = savedInstanceState?.getParcelable(KEY_STATE) ?: Instance(
-            "Hello World!"
-        )
-        text.text = state.text
-
         button.setOnClickListener {
-            text.text = "I am an Android Developer!"
-            state.text = "I am an Android Developer!"
+            viewModel.changeText()
         }
-    }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(KEY_STATE, state)
+        if(viewModel.state.value == null) {
+            Log.d("SergeyT", "sucsess")
+            viewModel.initState(Instance(
+                "Hello World!"
+            ))
+        }
+
+        viewModel.state.observe(this, Observer {
+            Log.d("SergeyT", it.toString())
+            text.text = it.text
+        })
     }
 
 
