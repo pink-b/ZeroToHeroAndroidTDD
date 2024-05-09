@@ -6,8 +6,12 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel by viewModels<StateViewModel>()
 
     lateinit var linearLayout: LinearLayout
     lateinit var text: TextView
@@ -15,35 +19,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
         val button = findViewById<Button>(R.id.removeButton)
         text = findViewById<TextView>(R.id.titleTextView)
         linearLayout = findViewById(R.id.rootLayout)
 
-        if(savedInstanceState == null)
-            linearLayout.addView(text)
+        if (viewModel.state.value == null) {
+            viewModel.initState(State(linearLayout.childCount == 1))
+        }
+
+        viewModel.state.observe(this, Observer {
+            if (it.textRemoved) {
+                linearLayout.removeView(text)
+            }
+        })
+
+
 
         button.setOnClickListener {
             linearLayout.removeView(text)
+            viewModel.removeItem()
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        val childCount = linearLayout.childCount == 1
-        outState.putBoolean(KEY_ELEMENT, childCount)
 
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        val removeTextItem = savedInstanceState.getBoolean(KEY_ELEMENT)
-        if(removeTextItem) {
-            linearLayout.removeView(text)
-        }
-    }
-    companion object {
-        private const val KEY_ELEMENT = "KEY_ELEMENT"
-    }
 }
