@@ -7,12 +7,13 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel by viewModels<StateViewModel>()
-
+    private var state: StatePattern = StatePattern.Initial
     lateinit var linearLayout: LinearLayout
     lateinit var text: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,23 +24,42 @@ class MainActivity : AppCompatActivity() {
         text = findViewById<TextView>(R.id.titleTextView)
         linearLayout = findViewById(R.id.rootLayout)
 
-        if (viewModel.state.value == null) {
-            viewModel.initState(State(linearLayout.childCount == 1))
-        }
-
-        viewModel.state.observe(this, Observer {
-            if (it.textRemoved) {
-                linearLayout.removeView(text)
-            }
-        })
-
 
 
         button.setOnClickListener {
-            linearLayout.removeView(text)
-            viewModel.removeItem()
+            state = StatePattern.Removed
+            state.apply(linearLayout, text)
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putSerializable("KEY", state)
+    }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        state = savedInstanceState.getSerializable("KEY") as StatePattern
+        state.apply(linearLayout, text)
+    }
+
+
+}
+
+interface StatePattern: Serializable {
+
+    fun apply(linearLayout: LinearLayout, text: TextView)
+    object Initial: StatePattern {
+        override fun apply(linearLayout: LinearLayout, text: TextView) {
+            Unit
+        }
+
+    }
+
+    object Removed: StatePattern {
+        override fun apply(linearLayout: LinearLayout, text: TextView) {
+            linearLayout.removeView(text)
+        }
+
+    }
 }
