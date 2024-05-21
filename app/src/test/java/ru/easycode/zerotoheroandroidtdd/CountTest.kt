@@ -1,6 +1,7 @@
 package ru.easycode.zerotoheroandroidtdd
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThat
 import org.junit.Test
 
 /**
@@ -15,10 +16,14 @@ class CountTest {
 
         var actual: UiState = count.increment(number = "0")
         var expected: UiState = UiState.Base(text = "5")
-        assertEquals(expected, actual)
+
+        assertEquals( expected, actual)
 
         actual = count.increment(number = "5")
         expected = UiState.Max(text = "10")
+
+
+
         assertEquals(expected, actual)
     }
 
