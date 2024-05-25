@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import java.util.TimerTask
 
 
 class MainActivity : AppCompatActivity() {
@@ -49,11 +50,15 @@ class MainActivity : AppCompatActivity() {
             loadButton.setOnClickListener {
                 loadButton.isEnabled = false
                 progressBar.visibility = View.VISIBLE
-                Handler(Looper.getMainLooper()).postDelayed({
-                    text.visibility = View.VISIBLE
-                    progressBar.visibility = View.GONE
-                    loadButton.isEnabled = true
+                java.util.Timer().schedule(object: TimerTask() {
+                    override fun run() {
+                        text.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+                        loadButton.isEnabled = true
+                    }
+
                 }, 3500)
+
             }
 
     }
