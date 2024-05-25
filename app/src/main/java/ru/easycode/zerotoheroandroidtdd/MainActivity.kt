@@ -2,6 +2,7 @@ package ru.easycode.zerotoheroandroidtdd
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -14,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     val viewModel by viewModels<ViewModel>()
 
-    val stateChanger = ChangeState()
+//    val stateChanger = ChangeState.InitState()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -25,16 +26,21 @@ class MainActivity : AppCompatActivity() {
 
 //        stateChanger.initState(loadButton, text, progressBar)
 
+        if (viewModel.state.value == null) {
+            Log.d("Sergey", "YRAAAA")
+            viewModel.changeLoadState(ChangeState.InitState())
+        }
+
         loadButton.setOnClickListener {
-            viewModel.changeLoadState()
+            viewModel.changeLoadState(ChangeState.LoadState())
             loadButton.postDelayed({
-                viewModel.changeLoadState()
+                viewModel.changeLoadState(ChangeState.LoadedState())
             }, 3500)
 
         }
 
         viewModel.state.observe(this, Observer {
-            stateChanger.apply(loadButton, text, progressBar, viewModel.state.value)
+            it.apply(loadButton, text, progressBar)
         })
     }
 

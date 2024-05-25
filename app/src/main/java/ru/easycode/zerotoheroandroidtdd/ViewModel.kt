@@ -6,16 +6,16 @@ import androidx.lifecycle.ViewModel
 
 class ViewModel: ViewModel() {
 
-    val state : LiveData<Boolean> get() = mutableLiveData
-    private val mutableLiveData = MutableLiveData<Boolean>(false)
+    val state : LiveData<ChangeState> get() = mutableLiveData
+    private val mutableLiveData = MutableLiveData<ChangeState>()
 
 //    fun initState() {
 //        mutableLiveData.value = false
 //    }
-    fun changeLoadState() {
+    fun changeLoadState(newData: ChangeState) {
         val currentState = mutableLiveData.value
         currentState?.let {
-            mutableLiveData.postValue(!it)
+            mutableLiveData.postValue(it)
         }
     }
 
