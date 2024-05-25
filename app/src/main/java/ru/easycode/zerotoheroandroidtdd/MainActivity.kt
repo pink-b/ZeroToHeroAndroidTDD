@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 loadButton.isEnabled = false
                 progressBar.visibility = View.VISIBLE
                 java.util.Timer().schedule(object: TimerTask() {
-                    override fun run() {
+                    override fun run() = runOnUiThread{
                         text.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
                         loadButton.isEnabled = true
