@@ -2,9 +2,11 @@ package ru.easycode.zerotoheroandroidtdd
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.lifecycle.MutableLiveData
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.getLiveData().observe(this, {
+            Log.d("Serey", it.toString())
             it.apply(button, progressBar, text)
         })
     }
